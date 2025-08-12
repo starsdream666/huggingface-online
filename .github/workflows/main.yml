@@ -1,0 +1,29 @@
+name: Multi-URL Keep-Alive (Loop Version)
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  
+  workflow_dispatch: {}
+
+jobs:
+  ping-all-urls:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping all URLs in a loop
+        run: |
+          URLS_TO_PING=(
+            "https://starsdream666-space-manager.hf.space" # <-- 替换成你的第一个URL
+            "https://starsdream666-mynote.hf.space" # <-- 替换成你的第二个URL
+          )
+          
+          for url in "${URLS_TO_PING[@]}"; do
+            echo "Pinging ${url} ..."
+            # curl -s -o /dev/null -w "%{http_code}" URL 会只输出状态码
+            # 我们这里用 --fail，如果失败会在日志中直接显示错误
+            if curl --fail --silent --show-error "${url}"; then
+              echo "  SUCCESS: ${url} is up."
+            else
+              echo "  FAILURE: ${url} is down."
+            fi
+          done
